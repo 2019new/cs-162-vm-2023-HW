@@ -52,8 +52,17 @@ ssize_t len_words(WordCount *wchead) {
 
 WordCount *find_word(WordCount *wchead, char *word) {
   /* Return count for word, if it exists */
-  WordCount *wc = NULL;
-  return wc;
+  if (wchead == NULL) {
+    printf("empty list:\n");
+    return NULL;
+  }
+  WordCount *wc;
+  for (wc = wchead;wc;wc = wc->next) {
+    if (strcmp(wc->word,word) == 0) {
+      return wc;
+    } 
+  }
+  return NULL;
 }
 
 int add_word(WordCount **wclist, char *word) {
@@ -61,6 +70,45 @@ int add_word(WordCount **wclist, char *word) {
      Otherwise insert with count 1.
      Returns 0 if no errors are encountered in the body of this function; 1 otherwise.
   */
+ //error handling
+ if (word == NULL || wclist == NULL) {
+  printf("invalid paramters");
+  return -1;
+ }
+ //if empty list
+ if (*wclist == NULL) {
+  printf("initialize list with first word:%s\n",word);
+  *wclist = malloc(sizeof(WordCount));
+  (*wclist)->count = 1;
+  (*wclist)->word = malloc(sizeof(word));
+  strcpy((*wclist)->word,word);
+  (*wclist)->next = NULL;
+  printf("current list:\n");
+  fprint_words(*wclist,stdout);
+  return 0;
+ }
+
+ printf("current list:\n");
+ fprint_words(*wclist,stdout);
+ //find word
+ WordCount *wc = find_word(*wclist,word);
+ if (wc == NULL) {
+  //no such word
+  WordCount *wcNew = malloc(sizeof(WordCount));
+  wcNew->word = malloc(sizeof(word));
+  strcpy(wcNew->word,word);
+  wcNew->count = 1;
+  wcNew->next = NULL;
+  WordCount *head = *wclist;
+  while(head->next) {
+    head = head->next;
+  }
+  head->next = wcNew;
+ } else {
+  //word already exists
+  wc->count++;
+ }
+
  return 0;
 }
 
